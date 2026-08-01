@@ -11,20 +11,22 @@ emisión con concentraciones observadas sitúa la escala óptima en 10,0 km
 (razón 0,93). A escala provincial ese efecto es indetectable, y el trabajo
 cuantifica por qué.
 
----
+\---
 
 ## Requisitos
 
-| Componente | Versión probada |
-|---|---|
-| R | 4.5.1 |
-| Python | 3.12 |
-| TeX Live | 2023 o posterior (solo para el paper y las diapositivas) |
+|Componente|Versión probada|
+|-|-|
+|R|4.5.1|
+|Python|3.12|
+|TeX Live|2023 o posterior (solo para el paper y las diapositivas)|
 
 Paquetes de R: `sf`, `terra`, `gstat`, `spatstat`, `spdep`, `spatialreg`,
 `dplyr`, `readr`, `ggplot2`, `tidyr`, `stringr`, `car`.
 
 ```r
+
+Alternativamente, R/00\_paquetes.R instala y verifica todas las dependencias.
 install.packages(c("sf","terra","gstat","spatstat","spdep","spatialreg",
                    "dplyr","readr","ggplot2","tidyr","stringr","car"))
 ```
@@ -33,102 +35,117 @@ Paquetes de Python: ver `requirements.txt`.
 
 ```bash
 python -m venv .venv
-# Windows:  .venv\Scripts\Activate.ps1
+# Windows:  .venv\\Scripts\\Activate.ps1
 # Linux/macOS:  source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
+\---
 
 ## Ejecución
 
 El orden importa. Los guiones de R consumen productos de los de Python, y
 entre sí forman una cadena de dependencias estricta.
 
-### 1. Descarga de datos
+### 1\. Descarga de datos
 
 ```bash
-python py/00_smoke_test.py          # comprueba conectividad con los servicios
-python py/01_nuts.py                # geometrías NUTS 2021
-python py/02_estaciones.py          # estaciones de medición
-python py/02b_metadatos.py          # clasificación de estaciones
-python py/03_series_no2.py          # series de NO2 (dataset E1a)
-python py/04_industrias.py          # instalaciones IED
-python py/04b_emisiones.py          # emisiones de NOx (E-PRTR)
-python py/04c_filtrar_industrias.py # cruce y filtrado por umbral
-python py/05_eurostat.py            # densidad de población
-python py/06_s5p_no2.py             # Sentinel-5P (requiere registro CDSE)
-python py/07_corine.py              # CORINE CLC2018 (requiere registro)
-python py/07b_normalizar_costa.py   # corrección de la clase mar
-python py/08_verificar.py           # verificación de las descargas
+python py/00\_smoke\_test.py          # comprueba conectividad con los servicios
+python py/01\_nuts.py                # geometrías NUTS 2021
+python py/02\_estaciones.py          # estaciones de medición
+python py/02b\_metadatos.py          # clasificación de estaciones
+python py/03\_series\_no2.py          # series de NO2 (dataset E1a)
+python py/04\_industrias.py          # instalaciones IED
+python py/04b\_emisiones.py          # emisiones de NOx (E-PRTR)
+python py/04c\_filtrar\_industrias.py # cruce y filtrado por umbral
+python py/05\_eurostat.py            # densidad de población
+python py/06\_s5p\_no2.py             # Sentinel-5P (requiere registro CDSE)
+python py/07\_corine.py              # CORINE CLC2018 (requiere registro)
+python py/07b\_normalizar\_costa.py   # corrección de la clase mar
+
+python py/04d\_explorar.py           # exploración de las instalaciones (opcional)
+python py/08\_verificar.py           # verificación de las descargas
 ```
 
 **Dos fuentes requieren registro previo:** Copernicus Data Space Ecosystem
 (Sentinel-5P) y `land.copernicus.eu` (CORINE). Las credenciales se leen de
-variables de entorno; ver `py/README_datos.md`.
+variables de entorno; ver `py/README\_datos.md`.
 
-### 2. Análisis
+### 2\. Análisis
 
 ```r
-source("R/10_prepare.R")             # preparación y control de calidad
-source("R/20_variograma_kriging.R")  # objetivo 1: campo continuo
-source("R/21_probabilidad.R")        # probabilidad de superar umbrales
-source("R/40_procesos_puntuales.R")  # objetivo 3: patrón industrial
-source("R/50_acoplamiento.R")        # objetivo 4: escala de influencia
-source("R/60_areal.R")               # objetivo 2: modelo areal y MAUP
-source("R/70_sintesis.R")            # objetivo 5: síntesis
-source("R/99_verificar.R")           # integridad: debe dar 0 fallos
+source("R/00\_paquetes.R")            # instala y comprueba dependencias
+
+source("R/10\_prepare.R")             # preparación y control de calidad
+
+source("R/20\_variograma\_kriging.R")  # objetivo 1: campo continuo
+
+source("R/21\_probabilidad.R")        # probabilidad de superar umbrales
+
+source("R/40\_procesos\_puntuales.R")  # objetivo 3: patrón industrial
+
+source("R/50\_acoplamiento.R")        # objetivo 4: escala de influencia
+
+source("R/60\_areal.R")               # objetivo 2: modelo areal y MAUP
+
+source("R/70\_sintesis.R")            # objetivo 5: síntesis
+
+source("R/99\_verificar.R")           # integridad: debe dar 0 fallos
+
 ```
 
-### 3. Documentos
+### 3\. Documentos
 
 ```bash
-cd paper  && latexmk -pdf paper.tex
-cd slides && latexmk -pdf slides.tex
+cd paper  \&\& latexmk -pdf paper.tex
+cd slides \&\& latexmk -pdf slides.tex
 ```
 
----
+\---
 
 ## Verificación de integridad
 
-`R/99_verificar.R` no comprueba que el análisis sea correcto: comprueba que
+`R/99\_verificar.R` no comprueba que el análisis sea correcto: comprueba que
 los datos que lo alimentan son los que se cree que son. Ejecutarlo tras
 cualquier cambio en la cadena.
 
 Verifica tres cosas:
 
 1. **Frescura.** Ningún fichero derivado puede ser más antiguo que sus
-   fuentes. Este bloque existe porque el fallo real que se produjo durante el
-   desarrollo no fue de código sino de orden de ejecución: un `.rds` derivado
-   se generó antes de que se descargaran las emisiones y arrastró ceros
-   durante semanas.
+fuentes. Este bloque existe porque el fallo real que se produjo durante el
+desarrollo no fue de código sino de orden de ejecución: un `.rds` derivado
+se generó antes de que se descargaran las emisiones y arrastró ceros
+durante semanas.
 2. **Invariantes de conservación.** El NOx asignado a provincias debe igualar
-   al de las instalaciones; el número de puntos del patrón debe igualar las
-   filas del objeto espacial; la suma de áreas provinciales debe aproximar el
-   área del dominio.
+al de las instalaciones; el número de puntos del patrón debe igualar las
+filas del objeto espacial; la suma de áreas provinciales debe aproximar el
+área del dominio.
 3. **Rangos plausibles.** Incluido un control sobre el ranking industrial: si
-   Asturias, A Coruña, Tarragona y Huelva no aparecen entre los ocho primeros,
-   el cruce espacial ha fallado aunque los totales cuadren.
+Asturias, A Coruña, Tarragona y Huelva no aparecen entre los ocho primeros,
+el cruce espacial ha fallado aunque los totales cuadren.
 
 **Cero fallos no demuestra que el análisis sea correcto. Un fallo sí demuestra
 que algo está mal.**
 
----
+\---
 
 ## Estructura
 
 ```
 no2-espana/
 ├── py/                 descarga y preprocesado
+
+│   └── common.py       utilidades compartidas
+
 ├── R/                  análisis
-│   ├── 10_prepare.R
-│   ├── 20_variograma_kriging.R
-│   ├── 21_probabilidad.R
-│   ├── 40_procesos_puntuales.R
-│   ├── 50_acoplamiento.R
-│   ├── 60_areal.R
-│   ├── 70_sintesis.R
-│   └── 99_verificar.R
+│   ├── 10\_prepare.R
+│   ├── 20\_variograma\_kriging.R
+│   ├── 21\_probabilidad.R
+│   ├── 40\_procesos\_puntuales.R
+│   ├── 50\_acoplamiento.R
+│   ├── 60\_areal.R
+│   ├── 70\_sintesis.R
+│   └── 99\_verificar.R
 ├── data/
 │   ├── raw/            descargas sin modificar   (no versionado)
 │   ├── interim/        productos intermedios     (no versionado)
@@ -145,7 +162,7 @@ Los directorios de datos **no se versionan**: se regeneran ejecutando los
 guiones de Python. Descargar todo lleva del orden de una hora, dominada por
 Sentinel-5P.
 
----
+\---
 
 ## Decisiones de diseño
 
@@ -168,22 +185,22 @@ presuponen conexidad. Canarias concentra el 24 % del NOx industrial español:
 el efecto peninsular estimado es modesto por construcción del dominio, no
 necesariamente por debilidad del mecanismo.
 
----
+\---
 
 ## Fuentes y licencias
 
-| Variable | Fuente | Licencia |
-|---|---|---|
-| Geometrías NUTS 2021 | EEA | CC-BY 4.0 |
-| NO₂ por estación | EEA (dataset E1a) | CC-BY 4.0 |
-| Instalaciones IED y emisiones | EEA DiscoData | CC-BY 4.0 |
-| NO₂ troposférico | Copernicus Sentinel-5P | Aviso legal Copernicus |
-| Cobertura del suelo | CORINE CLC2018 | Aviso legal Copernicus |
-| Densidad de población | Eurostat | CC-BY 4.0 |
+|Variable|Fuente|Licencia|
+|-|-|-|
+|Geometrías NUTS 2021|EEA|CC-BY 4.0|
+|NO₂ por estación|EEA (dataset E1a)|CC-BY 4.0|
+|Instalaciones IED y emisiones|EEA DiscoData|CC-BY 4.0|
+|NO₂ troposférico|Copernicus Sentinel-5P|Aviso legal Copernicus|
+|Cobertura del suelo|CORINE CLC2018|Aviso legal Copernicus|
+|Densidad de población|Eurostat|CC-BY 4.0|
 
 El código de este repositorio se publica bajo licencia MIT (ver `LICENSE`).
 
----
+\---
 
 ## Cita
 
@@ -198,3 +215,4 @@ Si este trabajo le resulta útil:
   url    = {https://github.com/randyfernandezp/no2-espana}
 }
 ```
+
