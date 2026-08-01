@@ -1,0 +1,36 @@
+# Datos: se regeneran con los guiones de py/
+data/raw/
+data/interim/
+data/processed/
+
+# Salidas grandes (descomentar si se prefiere no versionarlas)
+# output/figuras/
+# output/tablas/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+
+# Credenciales
+.env

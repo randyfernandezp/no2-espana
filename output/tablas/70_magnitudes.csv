@@ -1,0 +1,5 @@
+concepto,ug_m3,fuente
+Cota superior del efecto industrial areal,0.9563288881840624,IC 95 % de log_nox sobre todo el rango de emisiones
+Recargo local medido en estaciones industriales,1,"objetivo 1, validación externa (0,5-1,5)"
+Recargo local medido en estaciones de tráfico,3.5,"objetivo 1, validación externa (2,9-4,8)"
+Media areal nacional de NO2 de fondo,4.280128407953196,"objetivo 1, agregación de bloque"

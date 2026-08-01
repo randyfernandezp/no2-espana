@@ -1,0 +1,4 @@
+soporte,extension_km,industria_significativa,evidencia
+Continuo (superficie a 2 km),10,sí,"F = 13.86, p = 2.5e-04"
+NUTS-3 (50 provincias),112.67102237915593,no,"p = 0.63 (OLS), 0.68 (SEM)"
+NUTS-2 (16 comunidades),199.17610991880602,no (robusto),significativa en 2.5 % de 1000 zonificaciones
