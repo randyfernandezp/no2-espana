@@ -169,30 +169,113 @@ chk(n_esp >= 3,
 # =============================================================================
 # 4. REGRESIÓN CONTRA LOS RESULTADOS DOCUMENTADOS
 # =============================================================================
-# Los valores de ESTADO.md se obtuvieron con el código anterior. Tras
-# corregir el pipeline, lo esperable es que los del objetivo 1 no se muevan
-# (no dependen de las marcas industriales) y que los del 3 y el 4 sí puedan
-# hacerlo, porque la deduplicación cambia el patrón de puntos.
+# Los valores esperados son los VIGENTES, posteriores a la deduplicación por
+# InspireSiteId, y son los que cita el artículo. Se leen de los objetos
+# ajustados, no se transcriben a mano: si un modelo se reajusta y cambia, este
+# bloque lo detecta.
 #
-# NO se trata de forzar que coincidan. Se trata de saber QUÉ cambió y por
-# qué, antes de escribir el informe.
+# Si algún extractor no reconoce la estructura del objeto, avisa y sigue en
+# vez de romper: un verificador que no se puede ejecutar no verifica nada.
 sec("4. COMPARACIÓN CON LOS VALORES DOCUMENTADOS")
 
-REF <- tribble(
-  ~magnitud,                        ~esperado, ~tol,  ~sensible_al_bug,
-  "instalaciones en el patrón",         298,     10,   TRUE,
-  "rango práctico del variograma (km)",  71,      8,   FALSE,
-  "escala óptima de acoplamiento (km)",  10,      3,   TRUE,
-  "diámetro del distrito (km)",         9.5,      3,   TRUE
-)
-REF$observado <- NA_real_
-REF$observado[1] <- npoints(pp)
+`%||%` <- function(a, b) if (is.null(a)) b else a
 
-cat("Rellenar a mano tras ejecutar 20_, 40_ y 50_:\n\n")
+leer_si <- function(n) {
+  f <- file.path(PROC, paste0(n, ".rds"))
+  if (file.exists(f)) readRDS(f) else NULL
+}
+
+# --- sigma del proceso agregado -> diámetro del distrito = 4 sigma ----------
+extraer_sigma_km <- function(k) {
+  if (is.null(k)) return(NA_real_)
+  for (via in list(function(x) as.numeric(x$clustpar[["scale"]]),
+                   function(x) as.numeric(x$modelpar[["sigma"]]),
+                   function(x) as.numeric(x$par[["scale"]]))) {
+    v <- try(via(k), silent = TRUE)
+    if (!inherits(v, "try-error") && length(v) == 1 && is.finite(v))
+      return(if (v > 1000) v / 1000 else v)   # metros -> km
+  }
+  NA_real_
+}
+
+# --- rango práctico del variograma: rho(r*) = 0,05 --------------------------
+extraer_rango_km <- function(g, cual = "vg_fit") {
+  if (is.null(g)) return(NA_real_)
+  if (!is.data.frame(g) && !is.null(g[[cual]]) && is.data.frame(g[[cual]]))
+    g <- g[[cual]]
+  vm <- g
+  if (!is.data.frame(vm))
+    for (nm in c("vg_fit", "vg_res_fit", "variograma", "vgm", "fit"))
+      if (!is.null(g[[nm]]) && is.data.frame(g[[nm]])) { vm <- g[[nm]]; break }
+  if (!is.data.frame(vm) || !all(c("model", "range") %in% names(vm)))
+    return(NA_real_)
+  i <- which(as.character(vm$model) != "Nug")
+  if (!length(i)) return(NA_real_)
+  i <- i[which.max(vm$psill[i])]
+  r <- as.numeric(vm$range[i])
+  mult <- switch(as.character(vm$model[i]),
+                 Exp = 3, Gau = sqrt(3), Sph = 1, Mat = 4, 3)
+  r <- r * mult
+  if (r > 1000) r / 1000 else r
+}
+
+# --- escala óptima del barrido de anchos de banda ---------------------------
+extraer_escala_km <- function(a) {
+  if (is.null(a)) return(NA_real_)
+  if (!is.null(a$h_opt)) {
+    v <- as.numeric(a$h_opt)[1]
+    if (is.finite(v)) return(if (v > 1000) v / 1000 else v)
+  }
+  df <- if (is.data.frame(a)) a else
+        Filter(is.data.frame, a)[[1]] %||% NULL
+  if (is.null(df) || !is.data.frame(df)) return(NA_real_)
+  ch <- grep("^(h|banda|bw|ancho)", names(df), ignore.case = TRUE, value = TRUE)
+  cr <- grep("rmse", names(df), ignore.case = TRUE, value = TRUE)
+  if (!length(ch) || !length(cr)) return(NA_real_)
+  h <- as.numeric(df[[ch[1]]]); r <- as.numeric(df[[cr[1]]])
+  ok <- is.finite(h) & is.finite(r)
+  if (!any(ok)) return(NA_real_)
+  h[ok][which.min(r[ok])]
+}
+geo       <- leer_si("modelo_geo")
+sigma_km  <- extraer_sigma_km(leer_si("modelo_kppm"))
+rango_km  <- extraer_rango_km(geo, "vg_fit")
+rango_res <- extraer_rango_km(geo, "vg_res_fit")
+escala_km <- extraer_escala_km(leer_si("acoplamiento"))
+
+REF <- tribble(
+  ~magnitud,                             ~esperado, ~tol, ~observado,
+  "instalaciones en el patrón",              297,     5,   as.numeric(npoints(pp)),
+  "rango práctico del variograma (km)",       71,     8,   rango_km,
+  "escala óptima de acoplamiento (km)",       10,     3,   escala_km,
+  "diámetro del distrito, 4 sigma (km)",    10.7,     3,   4 * sigma_km,
+  "rango residual tras la deriva (km)",       24,      6,   rango_res
+)
+REF$desvio <- round(REF$observado - REF$esperado, 2)
 print(as.data.frame(REF))
-cat("\nLa razón escala/diámetro es el hallazgo central del proyecto.\n")
-cat("Si tras regenerar sigue cerca de 1,0, queda validada sobre datos\n")
-cat("limpios. Si se aleja, la convergencia era frágil y hay que decirlo.\n")
+
+for (i in seq_len(nrow(REF))) {
+  if (is.na(REF$observado[i])) {
+    avi(FALSE, paste0("No pude leer '", REF$magnitud[i],
+                      "' del objeto ajustado; revisar el extractor."))
+    next
+  }
+  chk(abs(REF$observado[i] - REF$esperado[i]) <= REF$tol[i],
+      sprintf("%s: %.2f (esperado %.2f +/- %.2f)", REF$magnitud[i],
+              REF$observado[i], REF$esperado[i], REF$tol[i]),
+      "El valor documentado y el ajustado se han separado: actualizar uno u otro")
+}
+
+# --- El hallazgo central: la razón entre las dos estimaciones ---------------
+if (all(is.finite(c(escala_km, sigma_km)))) {
+  razon <- escala_km / (4 * sigma_km)
+  cat(sprintf("\nRazón escala/diámetro = %.3f\n", razon))
+  chk(abs(razon - 1) < 0.25,
+      sprintf("Convergencia de escalas dentro del 25 %% (razón %.3f)", razon),
+      "La convergencia es el hallazgo central: si se aleja, hay que decirlo")
+} else {
+  avi(FALSE, "No se pudo calcular la razón escala/diámetro.")
+}
 
 # =============================================================================
 sec("RESUMEN")
