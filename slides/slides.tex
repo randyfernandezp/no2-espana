@@ -2,20 +2,40 @@
 % NO2 en España — presentación (20 minutos)
 % Compilar:  pdflatex slides.tex ; pdflatex slides.tex
 %
-% GUION TEMPORAL — 39 páginas en el cuerpo + 4 de reserva
+% GUION TEMPORAL — 42 páginas en el cuerpo + 7 de reserva = 49
+%
+% ORDEN DE LAS TRES RAMAS: geoestadística -> areal -> procesos puntuales,
+% que es el orden en que el curso las enumera. El acoplamiento va después,
+% como síntesis. El resultado nulo areal deja de ser un desenlace y pasa a ser
+% la PREGUNTA que responden las partes 5 y 6.
 % -----------------------------------------------------------------------------
 %   Portada e índice ...................... 0:40   (2 páginas)
 %   1. El problema ........................ 2:20   (1 divisoria + 3)
 %   2. Datos y diseño ..................... 2:10   (1 + 3)
 %   3. El campo de fondo .................. 3:40   (1 + 5)
-%   4. Dónde están las fuentes ............ 3:40   (1 + 5)
-%   5. La escala de influencia ............ 3:10   (1 + 4)   <- el núcleo
-%   6. Escala administrativa y MAUP ....... 3:20   (1 + 6)
+%   4. Escala administrativa y MAUP ....... 4:40   (1 + 7)
+%   5. Dónde están las fuentes ............ 4:15   (1 + 6)
+%   6. La escala de influencia ............ 4:15   (1 + 6)   <- el núcleo
 %   7. Conclusiones ....................... 1:00   (1 + 3)
 %                                          ------
-%                                           19:40
+%                                           23:00
 % -----------------------------------------------------------------------------
-% Ritmo medio: ~35 s por página de contenido. Las divisorias de sección duran
+% VA LARGO: sobran unos 3 minutos, es decir 5 páginas. Candidatas a suprimir,
+% en orden de menor coste argumental:
+%
+%   1. "Funciones de segundo orden"  -> la K residual de la lámina siguiente
+%      ya demuestra la agregación; esta solo prepara el terreno.
+%   2. "La incertidumbre no es uniforme" -> se dice de viva voz sobre el mapa.
+%   3. "Lo que este resultado no dice"   -> la salvedad del 0,41 % de mejora
+%      cabe en una frase durante el hallazgo central.
+%   4. "Exposición: la media territorial no es la métrica" -> pasa a reserva.
+%   5. "Distancia o grafo: el mismo modelo" -> solo si no queda más remedio:
+%      es cara de perder porque unifica los bloques 1 y 2 ante este tribunal.
+%
+% NO SUPRIMIR: "El umbral de declaración sesga la intensidad, no la escala",
+% "Esa escala, frente a las unidades en que se legisla", "El hallazgo central"
+% y "No es falta de potencia".
+% -----------------------------------------------------------------------------
 % 5 s: marcan el paso, no se leen.
 %
 % SI VAS JUSTO DE TIEMPO, suprime en este orden (ninguna sostiene una
@@ -40,9 +60,40 @@
 \usepackage{siunitx}
 \usepackage[version=4]{mhchem}
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
 \usepackage{graphicx}
+% Rutas de figuras: LaTeX prueba estas carpetas en orden, así que el mismo
+% fichero compila en local (slides/ + ../output/figuras/) y en Overleaf,
+% tanto si las imágenes van en output/figuras/ como en figuras/ o en la raíz.
+\graphicspath{{../output/figuras/}{output/figuras/}{figuras/}{./}}
 \usepackage{tikz}
 \usepackage{colortbl}
+
+% =============================================================================
+% NOTACIÓN DEL CURSO (Dr. E. A. Chacón, Spatial Statistics, UNI)
+% Localizaciones s, desplazamiento d (NO h), proceso latente W y observable Y,
+% adyacencia A (la letra W está ocupada por el proceso).
+% Centralizado aquí: si cambia una convención, cambia en las 40 páginas.
+% =============================================================================
+\newcommand{\dom}{D}                         % área de análisis
+\newcommand{\loc}{\bm{s}}                    % localización genérica
+\newcommand{\loci}[1]{\bm{s}_{#1}}           % localización i-ésima
+\newcommand{\dvec}{\vec{d}}                  % desplazamiento (vector)
+\newcommand{\dsc}{d}                         % distancia
+\newcommand{\Wp}[1]{W(#1)}                   % proceso latente
+\newcommand{\Yp}[1]{Y(#1)}                   % variable observable
+\newcommand{\varesp}{\sigma^{2}}             % varianza espacial
+\newcommand{\pepita}{\tau^{2}}               % pepita / error de medición
+\newcommand{\escala}{\phi}                   % parámetro de escala
+\newcommand{\suave}{\nu}                     % parámetro de suavizado
+\newcommand{\corr}{\rho}                     % función de correlación
+\newcommand{\Rphi}{\bm{R}_{\escala}}         % matriz de correlación
+\newcommand{\rangop}{r^{*}}                  % rango práctico: corr(r*)=0,05
+\newcommand{\Adj}{\bm{A}}                    % matriz de adyacencia
+\newcommand{\Prec}{\bm{Q}}                   % matriz de precisión
+\newcommand{\Esp}{\mathrm{E}}
+\newcommand{\Normal}{\mathcal{N}}
 
 \sisetup{output-decimal-marker={,}, group-separator={\,}}
 % Figuras acotadas en ancho y alto. El argumento opcional es la fracción de
@@ -84,17 +135,20 @@
 % Cintillo superior con el nombre de la sección
 \setbeamertemplate{headline}{%
   \vspace{2.2mm}%
-  \hspace{5mm}{\scriptsize\color{gris}\insertsectionhead}%
-  \hfill\hspace{5mm}\\[1mm]%
-  \hspace*{5mm}{\color{azulc}\rule{0.95\paperwidth}{0.4pt}}%
+  \hbox{\hspace*{5mm}{\scriptsize\color{gris}\insertsectionhead}\hfill}%
+  \vspace{1mm}%
+  \hbox{\hspace*{5mm}{\color{azulc}\rule{0.95\paperwidth}{0.4pt}}}%
 }
 
 % Pie institucional
 \setbeamertemplate{footline}{%
-  \hspace*{5mm}{\color{azulc}\rule{0.95\paperwidth}{0.4pt}}\\[1mm]%
-  \hspace*{5mm}{\tiny\color{gris}R. Fernández\quad\textbar\quad
+  \hbox{\hspace*{5mm}{\color{azulc}\rule{0.95\paperwidth}{0.4pt}}}%
+  \vspace{1mm}%
+  \hbox{\hspace*{5mm}{\tiny\color{gris}R. Fernández \textperiodcentered\
+  J. Carhuaricra\quad\textbar\quad
   \ce{NO2} en España: la escala de la influencia industrial}%
-  \hfill{\tiny\color{gris}\insertframenumber}\hspace*{5mm}\vspace{2mm}%
+  \hfill{\tiny\color{gris}\insertframenumber}\hspace*{5mm}}%
+  \vspace{2mm}%
 }
 
 % Divisoria de sección
@@ -121,16 +175,26 @@
     {\LARGE\color{azul}\bfseries La escala importa}\\[3mm]
     {\large Convergencia entre el agrupamiento de fuentes industriales\\
      y su influencia sobre el \ce{NO2} de fondo en España}\\[8mm]
-    {\color{azulc}\rule{\textwidth}{0.5pt}}\\[3mm]
-    Randy Fernández \hfill {\small\color{gris}2026}\\[1mm]
-    {\small\color{gris}Máster en Ciencia de Datos}
+    {\color{azulc}\rule{\textwidth}{0.5pt}}\\[4mm]
+    \begin{minipage}[t]{0.48\textwidth}
+      Randy Fernández Palomino\\[0.5mm]
+      {\footnotesize\color{gris}\texttt{randy.fernandez.p@uni.pe}}
+    \end{minipage}%
+    \begin{minipage}[t]{0.48\textwidth}
+      José Carhuaricra Cusipuma\\[0.5mm]
+      {\footnotesize\color{gris}\texttt{jose.carhuaricra@unh.edu.pe}}
+    \end{minipage}\\[6mm]
+    {\small\color{gris}Estadística Espacial \textperiodcentered\ Doctorado en
+    Ciencias e Ingeniería Estadística}\\[1mm]
+    {\small\color{gris}Universidad Nacional de Ingeniería (UNI)
+    \hfill 2026}
   \end{minipage}
   \vfill
 \end{frame}
 
 % =============================================================================
 \begin{frame}{Contenido}
-\vspace{2mm}
+\vspace{-5mm}
 \begin{columns}[T]
 \begin{column}{0.46\textwidth}
 \small
@@ -152,11 +216,27 @@
 \end{column}
 \end{columns}
 
-\vspace{8mm}
+\vspace{3mm}
+\centering
+\scriptsize
+\begin{tabular}{@{}llc@{}}
+\toprule
+\textbf{Rama} & \textbf{Conjunto índice} & \textbf{Objeto} \\
+\midrule
+Variación espacial continua & $\loc \in \dom \subset \mathbb{R}^2$, continuo
+  & $\Yp{\loc}$ \\
+Variación espacial discreta & $\{R_1,\dots,R_{50}\}$, retícula irregular
+  & $\Yp{R_i}$ \\
+Procesos puntuales & el índice \emph{es} la aleatoriedad & $\{\loci{i}\}$ \\
+\bottomrule
+\end{tabular}
+
+\vspace{3mm}
 \begin{block}{Hilo conductor}
-Tres ramas metodológicas independientes, articuladas por una pregunta que
-ninguna responde sola: \textbf{¿a qué escala espacial opera la influencia
-industrial sobre el \ce{NO2} de fondo?}
+\footnotesize
+Lo que cambia entre las tres ramas es \textbf{el conjunto índice}. Las articula
+una pregunta que ninguna responde sola: \textbf{¿a qué escala espacial opera la
+influencia industrial sobre el \ce{NO2} de fondo?}
 \end{block}
 \end{frame}
 
@@ -165,7 +245,7 @@ industrial sobre el \ce{NO2} de fondo?}
 % #############################################################################
 
 \begin{frame}{El problema está mal condicionado}
-
+\vspace{-5mm}
 \begin{columns}[T]
 \begin{column}{0.54\textwidth}
 El \ce{NO2} tiene \textbf{dos firmas simultáneas}:
@@ -187,7 +267,7 @@ Silesia, industria y ciudad son la misma covariable.}
 \end{column}
 
 \begin{column}{0.42\textwidth}
-\vspace{3mm}
+\vspace{-4mm}
 \begin{block}{No es un problema de método}
 Es de \textbf{identificabilidad}.
 
@@ -209,7 +289,7 @@ Vizcaíno y Lavalle (2018).}
 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\fig[0.52]{../output/figuras/20_patron_industrial.png}
+\fig[0.92]{20_patron_industrial.png}
 \end{column}
 
 \begin{column}{0.46\textwidth}
@@ -288,7 +368,7 @@ instalación.}
 
 \begin{frame}{Siete fuentes, todas públicas y de acceso programático}
 
-\vspace{2mm}
+\vspace{-5mm}
 \centering
 \small
 \begin{tabular}{@{}lll@{}}
@@ -323,10 +403,10 @@ aviso legal Copernicus (Sentinel, CORINE)}
 
 % =============================================================================
 \begin{frame}{La red de medición está sesgada}
-
+\vspace{-10mm}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\fig{../output/figuras/01_histograma.png}
+\fig[1.5]{01_histograma.png}
 \end{column}
 \begin{column}{0.46\textwidth}
 \vspace{3mm}
@@ -357,7 +437,7 @@ bruta \num{0.81}; tras el logaritmo, \num{-0.58}.}
 
 % =============================================================================
 \begin{frame}{Dos decisiones que condicionan todo lo demás}
-
+\vspace{-5mm}
 \begin{block}{1. Solo estaciones de fondo alimentan el modelo geoestadístico}
 \small
 \num{212} de \num{462}. Las de tráfico miden a microescala: el \ce{NO2} cae
@@ -389,31 +469,32 @@ métrica de política pública, no como variable dependiente.
 % #############################################################################
 
 \begin{frame}{Estructura espacial: el variograma}
-
+\vspace{-10mm}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\fig{../output/figuras/04_variograma_ajustado.png}
+\vspace{4mm}
+\fig[0.94]{04_variograma_ajustado.png}
 \end{column}
 \begin{column}{0.46\textwidth}
-\vspace{5mm}
+\vspace{6mm}
 \centering
 \begin{tabular}{@{}lc@{}}
 \toprule
-Modelo & gaussiano \\
-Rango práctico & \SI{71}{\kilo\metre} \\
-Pepita relativa & \SI{9.6}{\percent} \\
+Rango práctico $\rangop$ & \SI{72}{\kilo\metre} \\
+Pepita $\pepita/(\varesp+\pepita)$ & \SI{9.6}{\percent} \\
 \bottomrule
 \end{tabular}
 
-\vspace{5mm}
+\vspace{3mm}
 \raggedright
-{\small Selección por suma de cuadrados: gaussiano \num{1.86} frente a
-esférico \num{2.27}.}
+{\footnotesize Rango práctico en el sentido $\corr(\rangop)=\num{0.05}$. El
+\SI{90.4}{\percent} de la variabilidad está espacialmente estructurada.}
 
-\vspace{4mm}
-{\footnotesize\color{gris}\textbf{Advertencia declarada:} el modelo gaussiano
-implica variación por debajo de la menor distancia entre estaciones, un
-supuesto poco creíble en calidad del aire.}
+\vspace{2mm}
+{\footnotesize\color{gris}\textbf{Advertencia declarada:} el ajuste es el
+límite suave de la familia de Matérn ($\suave$ grande) e implica variación por
+debajo de la menor distancia entre estaciones. Poco creíble en calidad del
+aire: se declara y se controla con el variograma residual.}
 \end{column}
 \end{columns}
 
@@ -426,50 +507,56 @@ supuesto poco creíble en calidad del aire.}
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize Variograma omnidireccional}\\[1mm]
-\fig[0.40]{../output/figuras/02_variograma_omni.png}
+\fig[0.48]{02_variograma_omni.png}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize Variograma de los residuos tras la deriva}\\[1mm]
-\fig[0.40]{../output/figuras/05_variograma_residual.png}
+\fig[0.48]{05_variograma_residual.png}
 \end{column}
 \end{columns}
 
-\vspace{4mm}
+\vspace{-1mm}
 \begin{center}
-\large
-Rango bruto \SI{71}{\kilo\metre} $\;\longrightarrow\;$ rango residual
-\textbf{\SI{24}{\kilo\metre}}
+$\Yp{\loci{i}} = \underbrace{\bm{x}^{\!\top}\!(\loci{i})\bm{\beta}}
+_{\text{\footnotesize variación espacial explicada}}
++\;\underbrace{\Wp{\loci{i}}}
+_{\text{\footnotesize no explicada}}\; +\; \varepsilon_i$
 \end{center}
 
-\vspace{2mm}
+\vspace{-1mm}
 \begin{center}
-{\small Varianza bruta \num{0.650} $\rightarrow$ residual \num{0.155}. La
-deriva externa (Sentinel-5P, uso del suelo y altitud) explica la mayor parte
-de la estructura regional.}
+Rango bruto \SI{72}{\kilo\metre} $\;\longrightarrow\;$ rango residual
+\textbf{\SI{26}{\kilo\metre}}
+\end{center}
+\vspace{-2mm}
+\begin{center}
+{\footnotesize Varianza bruta \num{0.650} $\rightarrow$ residual \num{0.155}.
+Una tendencia infla el semivariograma con un término cuadrático en la
+distancia: por eso el rango se estima sobre residuos.}
 \end{center}
 
 \end{frame}
 
 % =============================================================================
 \begin{frame}{Kriging ordinario frente a kriging con deriva externa}
-
+\vspace{-2mm}
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize Kriging ordinario}\\[1mm]
-\fig[0.36]{../output/figuras/06_mapa_ko.png}
+\fig[0.45]{06_mapa_ko.png}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize Kriging con deriva externa}\\[1mm]
-\fig[0.36]{../output/figuras/07_mapa_kde.png}
+\fig[0.45]{07_mapa_kde.png}
 \end{column}
 \end{columns}
 
-\vspace{3mm}
+\vspace{-3mm}
 \begin{center}
-\small
+\footnotesize
 \begin{tabular}{@{}lccc@{}}
 \toprule
  & \textbf{RMSE} & \textbf{$R^2$} & \textbf{Sesgo} \\
@@ -484,19 +571,23 @@ Mejora & \SI{-34.3}{\percent} & & \\
 \end{tabular}
 \end{center}
 
-\vspace{1mm}
-\centering{\footnotesize Validación cruzada \emph{leave-one-out} sobre
-\num{212} estaciones. Cobertura empírica del intervalo al \SI{95}{\percent}:
-\num{0.910}.}
+% ---------------------------------------------------------------------------
+% ---------------------------------------------------------------------------
+\vspace{-2mm}
+\centering{\footnotesize Validación \emph{leave-one-out}, \num{212}
+estaciones. Cobertura al \SI{95}{\percent}: \num{0.910}, con
+$\mathrm{ESD}=\num{1.225}$: la varianza de kriging es un \SI{50}{\percent}
+menor de la real, porque trata $\hat\varesp$, $\hat\pepita$ y $\hat\escala$
+como conocidos.}
 
 \end{frame}
 
 % =============================================================================
 \begin{frame}{La incertidumbre no es uniforme}
-
+\vspace{-5mm}
 \begin{columns}[T]
 \begin{column}{0.52\textwidth}
-\fig{../output/figuras/08_mapa_error.png}
+\fig[1.2]{08_mapa_error.png}
 \end{column}
 \begin{column}{0.44\textwidth}
 \vspace{6mm}
@@ -556,38 +647,339 @@ sepultada por el tráfico en las ciudades.}
 \end{frame}
 
 % #############################################################################
+\section{Escala administrativa y MAUP}
+% MAUP = Modifiable Areal Unit Problem (problema de la unidad de área
+% modificable): los resultados estadísticos dependen del tamaño y la forma
+% de las unidades de agregación elegidas.
+% #############################################################################
+
+\begin{frame}{Distancia o grafo: el mismo modelo}
+
+\vspace{2mm}
+\begin{columns}[T]
+\begin{column}{0.47\textwidth}
+\centering
+\textbf{Rama continua}
+\[ \bm{Y} \sim \Normal_n\!\left(\bm{X}\bm{\beta},\;
+   \varesp\Rphi + \pepita\bm{I}_n\right) \]
+\vspace{1mm}
+{\small La covarianza se construye con \textbf{distancias}: $\Rphi$ depende de
+$\lVert\loci{i}-\loci{j}\rVert$.}
+\end{column}
+\begin{column}{0.47\textwidth}
+\centering
+\textbf{Rama areal}
+\[ \bm{Y}\mid\bm{X} \sim \Normal\!\left(\bm{X}\bm{\beta},\;
+   \Prec^{-1} + \varesp\bm{I}\right) \]
+\vspace{1mm}
+{\small La covarianza se construye con un \textbf{grafo}:
+$Q_{ij}\neq 0 \iff$ $R_i$ y $R_j$ son vecinas.}
+\end{column}
+\end{columns}
+
+\vspace{4mm}
+\begin{block}{}
+\centering
+\small
+Misma estructura: $\Normal(\bm{X}\bm{\beta},\ \text{espacial}+\text{ruido})$.
+Solo cambia cómo se especifica el efecto espacial.
+
+\vspace{1.5mm}
+La covarianza es \textbf{densa} e informa de la dependencia marginal; la
+precisión es \textbf{dispersa} e informa de la independencia condicional.
+\end{block}
+
+\vspace{2mm}
+\centering{\footnotesize\color{gris}No se modela dos veces lo mismo: se modela
+el mismo campo bajo dos conjuntos índice, y la comparación entre ambos es el
+objeto de esta parte.}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{Dependencia espacial: en los residuos, no en la respuesta}
+\vspace{-2mm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\centering
+{\footnotesize Diagrama de dispersión de Moran}\\[-0.5mm]
+\fig[0.45]{40_moran_scatter.png}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+{\footnotesize Agrupamientos locales (\textsc{lisa})}\\[-0.5mm]
+\fig[0.45]{41_lisa.png}
+\end{column}
+\end{columns}
+
+\vspace{-3mm}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & \textbf{$I$ de Moran} & \textbf{$\Esp[I]$ bajo $H_0$} & \textbf{$p$} \\
+\midrule
+Sobre la respuesta (media areal) & \num{0.013} & \num{-0.020} & \num{0.32} \\
+\rowcolor{grisc}
+Sobre los residuos del \textsc{mco} & \num{0.187} & \num{-0.020} & \num{0.0019} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{-1mm}
+\centering{\small Con $n=\num{50}$, $\Esp[I]=-1/(n-1)=\num{-0.020}$: el
+valor sobre la respuesta no es «cero», es su esperanza bajo independencia. La
+dependencia aparece \textbf{después} de condicionar, no antes: eso justifica el
+modelo de error espacial, no un contagio entre provincias.
+{\scriptsize\color{gris} \textsc{lisa}: indicadores locales de asociación
+espacial, la descomposición local del índice de Moran.}}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{A escala provincial, la industria desaparece}
+\framesubtitle{Cuatro intentos de refutación de un resultado nulo}
+
+\vspace{1mm}
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Especificación} & \textbf{$\hat\beta$ industria} & \textbf{$p$} \\
+\midrule
+\textsc{mco}, emisiones totales & \num{-0.019} & \num{0.63} \\
+\textsc{mco}, presión a \SI{10}{\kilo\metre} & \num{-0.043} & \num{0.36} \\
+\textsc{mco} sin Madrid (Cook $=\num{0.97}$) & \num{0.004} & \num{0.90} \\
+\textsc{sar} con regresión (error espacial) & \num{0.017} & \num{0.68} \\
+\bottomrule
+\end{tabular}
+
+\vspace{3mm}
+\begin{columns}[T]
+\begin{column}{0.46\textwidth}
+\begin{block}{\textsc{sar} con regresión}
+\centering
+\small
+$\bm{U}=\bm{B}\bm{U}+\bm{\varepsilon}$, \; $\bm{U}=\bm{Y}-\bm{X}\bm{\beta}$
+
+\vspace{1mm}
+$\bm{B}=\alpha\,\bm{D}_a^{-1}\Adj$, \;
+$\hat\alpha=\num{0.446}\in(-1,1)$
+\end{block}
+\end{column}
+\begin{column}{0.46\textwidth}
+\begin{block}{Densidad de población}
+\centering
+$\hat\beta = \num{0.575}$, \quad $p = \num{2.1e-9}$
+
+\vspace{1mm}
+{\footnotesize Todos los \textsc{vif} $< \num{1.8}$}
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{3mm}
+\centering{\scriptsize \textsc{mco}: mínimos cuadrados ordinarios.
+\textsc{sem}: \emph{spatial error model}, el \textsc{sar} con regresión sobre
+el residuo. Se reporta \textsc{sem} y no el modelo Durbin pese a su \textsc{aic}
+marginalmente inferior ($\Delta$AIC $= \num{0.25}$): los contrastes robustos
+separan hacia el error, el $\rho$ del retardo no es significativo
+($p = \num{0.91}$) y ningún impacto del Durbin alcanza significación.}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{MAUP: los dos componentes}
+\framesubtitle{\emph{Modifiable areal unit problem}}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\fig[0.7]{43_maup_zonificacion.png}
+\end{column}
+\begin{column}{0.46\textwidth}
+{\footnotesize\textbf{Escala.} A \textsc{nuts}-2 aparece
+$\hat\beta = \num{-0.562}$ ($p = \num{0.006}$), pero es íntegramente Madrid:
+Cook $=\num{4.64}$, diecinueve veces el umbral. Sin ella,
+$\hat\beta = \num{-0.063}$ ($p = \num{0.68}$) y el $R^2$ ajustado cae de
+\num{0.775} a \num{0.597}, casi el \num{0.601} de \textsc{nuts}-3.}
+
+\vspace{2mm}
+{\footnotesize\textbf{Zonificación.} \num{1000} particiones de \num{16}
+grupos por $k$-medias:}
+
+\vspace{1.5mm}
+\centering
+\footnotesize
+\begin{tabular}{@{}lc@{}}
+\toprule
+Densidad significativa en & \SI{100}{\percent} \\
+\rowcolor{grisc}
+Industria significativa en & \SI{2.5}{\percent} \\
+\bottomrule
+\end{tabular}
+
+\vspace{2mm}
+\raggedright
+{\scriptsize El valor de \textsc{nuts}-2 queda \textbf{fuera del rango
+completo} de las particiones. Madrid \textbf{nunca} queda aislada en las mil
+réplicas: \textsc{nuts}-2 la aísla por razones históricas, no geométricas.}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{Los mecanismos son inseparables a esta escala}
+\vspace{-5mm}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\fig[0.8]{51_sintesis_bloques.png}
+\end{column}
+\begin{column}{0.46\textwidth}
+\vspace{2mm}
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Bloque} & \textbf{único} & \textbf{total} \\
+\midrule
+Uso del suelo & \num{0.157} & \num{0.906} \\
+Urbanización & \num{0.023} & \num{0.664} \\
+Industria & \num{0.005} & \num{0.287} \\
+Geografía & \num{0.001} & \num{0.120} \\
+\bottomrule
+\end{tabular}
+
+\vspace{3mm}
+\begin{alertblock}{}
+\centering
+Varianza única total:
+\textbf{\SI{19.7}{\percent}} del $R^2$
+\end{alertblock}
+
+\vspace{1mm}
+{\footnotesize El \SI{80.3}{\percent} restante es \textbf{compartida}: no
+atribuible a ningún mecanismo por separado.}
+\end{column}
+\end{columns}
+
+\vspace{1mm}
+\centering{\footnotesize La industria se ubica donde hay ciudades, puertos y
+autopistas: las mismas variables que generan \ce{NO2} de tráfico.
+\textbf{La endogeneidad es una propiedad del territorio, no un defecto del
+análisis.}}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{Exposición: la media territorial no es la métrica}
+\vspace{-1mm}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\centering
+{\footnotesize Exposición ponderada por población}\\[1mm]
+\fig[0.6]{13_exposicion_poblacional.png}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+{\footnotesize Brecha frente a la media areal}\\[1mm]
+\fig[0.6]{15_brecha_exposicion.png}
+\end{column}
+\end{columns}
+
+\vspace{-2.5mm}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & \textbf{areal} & \textbf{ponderada} &
+ \textbf{\% pobl.\ $>$ \SI{20}{\ugm}} \\
+\midrule
+Madrid & \num{7.52} & \num{15.01} & \SI{37.3}{\percent} \\
+Barcelona & \num{6.64} & \num{14.21} & \SI{30.6}{\percent} \\
+Bizkaia & \num{5.74} & \num{11.80} & \SI{22.7}{\percent} \\
+\bottomrule
+\end{tabular}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{Cuánto, no solo si}
+
+\vspace{2mm}
+\centering
+\small
+\begin{tabular}{@{}lc@{}}
+\toprule
+ & \textbf{\ugm} \\
+\midrule
+\rowcolor{grisc}
+\textbf{Cota superior del efecto industrial areal} & \textbf{\num{0.96}} \\
+Recargo local en estaciones industriales & $\approx\num{1.0}$ \\
+Recargo local en estaciones de tráfico & $\approx\num{3.5}$ \\
+Media areal nacional de fondo & \num{4.28} \\
+\bottomrule
+\end{tabular}
+
+\vspace{4mm}
+\begin{block}{Por qué una cota y no un $p$-valor}
+\centering
+No es que \emph{ignoremos} si la industria influye.
+
+\vspace{1mm}
+Sabemos que \textbf{no puede influir más que eso}: el \SI{22.3}{\percent} de
+la media nacional.
+\end{block}
+
+\vspace{3mm}
+\centering{\footnotesize El \SI{43.3}{\percent} de las estaciones de tráfico superan
+hoy los \SI{20}{\ugm}, frente al \SI{0.16}{\percent} de la superficie de
+fondo. España cumple con holgura la directiva vigente, pero el problema reside
+en una escala por debajo de la que este trabajo puede resolver.}
+
+\end{frame}
+
+% #############################################################################
 \section{Dónde están las fuentes}
 % #############################################################################
 
 \begin{frame}{El patrón industrial no es aleatorio}
 
 \begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\fig{../output/figuras/22_cuadrantes.png}
+\begin{column}{0.5\textwidth}
+
+\fig[1.9]{22_cuadrantes.png}
 \end{column}
 \begin{column}{0.46\textwidth}
-\vspace{3mm}
-{\small \num{297} instalaciones sobre \SI{504327}{\kilo\metre\squared}.}
+{\scriptsize \num{297} instalaciones sobre \SI{504327}{\kilo\metre\squared}.}
 
-\vspace{3mm}
+\vspace{2mm}
 \centering
 \small
 \begin{tabular}{@{}lc@{}}
 \toprule
-Intensidad media & \num{0.589} / \SI{1000}{\kilo\metre\squared} \\
+Intensidad media & \num{0.589}/\SI{1000}{\kilo\metre\squared} \\
 Distancia al vecino & \SI{12.7}{\kilo\metre} \\
-Esperada bajo ACE & \SI{20.6}{\kilo\metre} \\
+Esperada bajo \textsc{ace}$^{\dagger}$ & \SI{20.6}{\kilo\metre} \\
 \bottomrule
 \end{tabular}
 
-\vspace{5mm}
+\vspace{3mm}
 \begin{alertblock}{Contraste de cuadrantes}
 \centering
-$X^2 = \num{531.64}$, \quad $p = \num{0.002}$
+$X^2 = \textstyle\sum_{i} (n_i-e_i)^2/e_i = \num{531.64}$
+
+\vspace{0.5mm}
+$p = \num{0.002}$
+
+\vspace{0.5mm}
+{\scriptsize Monte Carlo, $m=\num{52}$ teselas. $H_0$: proceso homogéneo.}
+\end{alertblock}
 
 \vspace{1mm}
-{\footnotesize Monte Carlo condicional, \num{52} teselas}
-\end{alertblock}
+{\scriptsize\color{gris}$^{\dagger}$\,\textsc{ace}: aleatoriedad espacial
+completa, o sea un Poisson homogéneo. Deduplicado por \texttt{InspireSiteId}:
+la teoría exige un proceso \emph{ordenado}.}
 \end{column}
 \end{columns}
 
@@ -596,17 +988,23 @@ $X^2 = \num{531.64}$, \quad $p = \num{0.002}$
 % =============================================================================
 \begin{frame}{Intensidad modelada: qué predice la ubicación}
 
+\vspace{-1mm}
+\begin{center}
+$\log \lambda(\loc) = B(\loc) + \theta_1 Z_1(\loc) + \cdots +
+\theta_p Z_p(\loc)$
+\end{center}
+
+\vspace{1mm}
 \begin{columns}[T]
 \begin{column}{0.45\textwidth}
-\fig{../output/figuras/21_intensidad.png}
+\fig[1.90]{21_intensidad.png}
 \end{column}
 \begin{column}{0.5\textwidth}
-\vspace{1mm}
 \centering
 \small
 \begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{Efecto por rango IQ} & \textbf{Factor} & $p$ \\
+\textbf{$Z_j(\loc)$, efecto por rango intercuartílico} & \textbf{Factor} & $p$ \\
 \midrule
 Suelo industrial & $\times\num{3.94}$ & $<\num{0.001}$ \\
 Superficie artificial & $\times\num{1.32}$ & $<\num{0.001}$ \\
@@ -617,16 +1015,18 @@ Transporte & $\times\num{0.75}$ & $<\num{0.001}$ \\
 \bottomrule
 \end{tabular}
 
-\vspace{5mm}
+\vspace{2mm}
 \begin{block}{}
-\small
+\scriptsize
 Condicionando en uso del suelo, \textbf{dónde vive la gente no predice dónde
-se instala la industria}.
-
-\vspace{1.5mm}
-Evidencia directa contra la hipótesis de colinealidad total entre ambos
+se instala la industria}: el factor \num{0.999} es el valor de referencia bajo
+independencia. Evidencia directa contra la colinealidad total entre ambos
 mecanismos.
 \end{block}
+
+\vspace{1mm}
+{\scriptsize\color{gris}Los $Z_j(\loc)$ han de conocerse en \textbf{todo} el
+dominio: de ahí que sean rásteres y no atributos de planta.}
 \end{column}
 \end{columns}
 
@@ -638,31 +1038,40 @@ mecanismos.
 \begin{columns}[T]
 \begin{column}{0.48\textwidth}
 \centering
-{\footnotesize $K$ inhomogénea}\\[1mm]
-\fig{../output/figuras/23_Kinhom.png}
+{\footnotesize $K$ inhomogénea}\\[-0.5mm]
+\fig[0.58]{23_Kinhom.png}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
-{\footnotesize Correlación por pares $g$}\\[1mm]
-\fig{../output/figuras/24_ginhom.png}
+{\footnotesize Correlación por pares $g$}\\[-0.5mm]
+\fig[0.58]{24_ginhom.png}
 \end{column}
 \end{columns}
 
-\vspace{4mm}
+\vspace{-2mm}
 \begin{center}
-{\small Envolventes de Monte Carlo con \num{199} simulaciones. La curva
-empírica sale de la envolvente: agregación significativa frente a un proceso
-de Poisson inhomogéneo con la misma intensidad.}
+$g_2(\loc,\loc') = \dfrac{\lambda_2(\loc,\loc')}{\lambda(\loc)\lambda(\loc')}
+\;\;\overset{\text{independencia}}{=}\;\; 1,
+\qquad
+K(t) = \pi t^2 \;\;\text{bajo Poisson homogéneo}$
+\end{center}
+
+\vspace{-1mm}
+\begin{center}
+{\footnotesize Rechazada la homogeneidad, la caracterización de segundo orden
+ha de condicionar en $\hat\lambda(\loc)$: de ahí las versiones
+\textbf{inhomogéneas}. Envolventes con \num{199} simulaciones; la curva
+empírica sale de la envolvente.}
 \end{center}
 
 \end{frame}
 
 % =============================================================================
 \begin{frame}{Tras condicionar en todo, quedan distritos}
-
+\vspace{-10mm}
 \begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\fig{../output/figuras/26_Kinhom_residual.png}
+\begin{column}{0.5\textwidth}
+\fig[1.5]{26_Kinhom_residual.png}
 \end{column}
 \begin{column}{0.46\textwidth}
 \vspace{3mm}
@@ -688,9 +1097,15 @@ histórica.
 \end{frame}
 
 % =============================================================================
-\begin{frame}{Proceso de conglomerados de Thomas}
+\begin{frame}{Proceso agregado: padres no observados y descendencia}
 
-\vspace{1mm}
+\vspace{-2mm}
+\begin{center}
+{\footnotesize Padres de un Poisson de intensidad $\kappa$ $\rightarrow$
+descendencia por padre $\rightarrow$ \textbf{lo observado son los hijos}. Con
+dispersión gaussiana, es el proceso de Thomas.}
+\end{center}
+
 \begin{center}
 \small
 \begin{tabular}{@{}lc@{}}
@@ -706,9 +1121,9 @@ Fuerza del conglomerado $\varphi$ & \num{10.74} \\
 \end{tabular}
 \end{center}
 
-\vspace{3mm}
+\vspace{1mm}
 \begin{center}
-\begin{tikzpicture}[scale=0.72]
+\begin{tikzpicture}[scale=0.80]
   \foreach \x/\y in {0/0, 3.6/0.35, 7.2/-0.25} {
     \draw[azulc,dashed] (\x,\y) circle (1.05);
     \fill[azul] (\x,\y) circle (0.055);
@@ -721,10 +1136,53 @@ Fuerza del conglomerado $\varphi$ & \num{10.74} \\
 \end{tikzpicture}
 \end{center}
 
-\vspace{1mm}
-\centering{\footnotesize\color{gris}$\sigma$ es la desviación típica de la
-dispersión gaussiana de las instalaciones en torno a un centro latente;
-$4\sigma$ contiene aproximadamente el \SI{95}{\percent}.}
+\centering{\scriptsize\color{gris}$\sigma$ es la desviación típica de la
+dispersión en torno a un centro latente; $4\sigma$ contiene $\approx$ el
+\SI{95}{\percent}. Un proceso agregado es un Poisson \textbf{doblemente
+estocástico}: su intensidad $\Lambda(\loc)$ es aleatoria y no se observa.}
+
+\end{frame}
+
+% =============================================================================
+\begin{frame}{El umbral de declaración sesga la intensidad, no la escala}
+
+\vspace{2mm}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{block}{El problema}
+\small
+El registro E-PRTR solo recoge instalaciones que declaran más de
+\SI{100}{\tonne} anuales de \ce{NOx}. El patrón observado $Y$ es un
+\textbf{subconjunto} del patrón industrial real $Z$.
+\end{block}
+\end{column}
+\begin{column}{0.46\textwidth}
+\begin{block}{El resultado}
+\small
+Si cada evento de $Z$ se retiene de forma independiente con probabilidad $p$:
+\[ \lambda_Y(\loc) = p\,\lambda_Z(\loc) \qquad\text{pero}\qquad
+   K_Y(t) = K_Z(t) \]
+\end{block}
+\end{column}
+\end{columns}
+
+\vspace{3mm}
+\begin{center}
+\begin{tikzpicture}
+\node[draw=azul,line width=0.7pt,rounded corners=2pt,inner sep=2.5mm,
+      fill=grisc]{%
+\begin{minipage}{0.80\textwidth}\centering
+{\color{azul}El hallazgo central depende de $K$, no de $\lambda$.\\
+\textbf{El truncamiento no toca la magnitud que se estima.}}
+\end{minipage}};
+\end{tikzpicture}
+\end{center}
+
+\vspace{2mm}
+\centering{\footnotesize\color{gris}\textbf{Salvedad declarada:} el
+adelgazamiento no es independiente de la posición si las instalaciones grandes
+se agrupan de forma distinta a las pequeñas. La correlación de marcas es el
+diagnóstico de eso, y no muestra tal patrón.}
 
 \end{frame}
 
@@ -733,16 +1191,15 @@ $4\sigma$ contiene aproximadamente el \SI{95}{\percent}.}
 % #############################################################################
 
 \begin{frame}{Superficie de presión de emisión}
-
+\vspace{-10mm}
 \begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\fig{../output/figuras/28_presion_emision.png}
+\begin{column}{0.55\textwidth}
+\fig[1.5]{28_presion_emision.png}
 \end{column}
-\begin{column}{0.46\textwidth}
-\vspace{5mm}
+\begin{column}{0.4\textwidth}
 \[
-P_h(\mathbf{u}) = \sum_{i} \log(1+m_i)\,
-                  \kappa_h(\|\mathbf{u}-\mathbf{s}_i\|)
+P_h(\loc) = \sum_{i} \log(1+m_i)\,
+            \kappa_h\!\left(\lVert\loc-\loci{i}\rVert\right)
 \]
 
 \vspace{4mm}
@@ -762,10 +1219,10 @@ la superficie.}
 
 % =============================================================================
 \begin{frame}{La escala se estima, no se fija por diseño}
-
+\vspace{-5mm}
 \begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\fig{../output/figuras/30_escala_influencia.png}
+\begin{column}{0.5\textwidth}
+\fig[1.1]{30_escala_influencia.png}
 \end{column}
 \begin{column}{0.46\textwidth}
 \vspace{1mm}
@@ -799,7 +1256,7 @@ $R^2$ ajustado \num{0.754} $\rightarrow$ \num{0.769}}
 
 % =============================================================================
 \begin{frame}{Lo que este resultado \emph{no} dice}
-
+\vspace{-10mm}
 \vspace{4mm}
 \begin{columns}[T]
 \begin{column}{0.46\textwidth}
@@ -874,127 +1331,46 @@ datos de entrada es mejor evidencia que cualquier remuestreo.}
 
 \end{frame}
 
-% #############################################################################
-\section{Escala administrativa y MAUP}
-% #############################################################################
+% =============================================================================
+% =============================================================================
+% LA MISMA ESCALA, SOBRE EL MAPA. Va después de "El hallazgo central" porque
+% el tercer panel usa el diámetro de 10,7 km que allí se establece.
+\begin{frame}{Esa escala, frente a las unidades en que se legisla}
 
-\begin{frame}{Dependencia espacial: en los residuos, no en la respuesta}
-
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\centering
-{\footnotesize Diagrama de dispersión de Moran}\\[1mm]
-\fig[0.35]{../output/figuras/40_moran_scatter.png}
-\end{column}
-\begin{column}{0.48\textwidth}
-\centering
-{\footnotesize Agrupamientos locales (LISA)}\\[1mm]
-\fig[0.35]{../output/figuras/41_lisa.png}
-\end{column}
-\end{columns}
-
-\vspace{3mm}
+\vspace{-2mm}
 \begin{center}
-\small
-\begin{tabular}{@{}lcc@{}}
-\toprule
- & \textbf{$I$ de Moran} & \textbf{$p$} \\
-\midrule
-Sobre la respuesta (media areal) & \num{0.013} & \num{0.32} \\
-\rowcolor{grisc}
-Sobre los residuos del OLS & \num{0.187} & \num{0.0019} \\
-\bottomrule
-\end{tabular}
+\includegraphics[width=1\textwidth]{45_tres_escalas.png}
 \end{center}
 
-\vspace{2mm}
-\centering{\small La dependencia aparece \textbf{después} de condicionar en
-densidad y área. Es lo que justifica el modelo de error espacial
-($\lambda = \num{0.446}$), no un contagio entre provincias.}
-
-\end{frame}
-
-% =============================================================================
-\begin{frame}{A escala provincial, la industria desaparece}
-\framesubtitle{Cuatro intentos de refutación de un resultado nulo}
-
-\vspace{1mm}
-\centering
-\small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-\textbf{Especificación} & \textbf{$\hat\beta$ industria} & \textbf{$p$} \\
-\midrule
-OLS, emisiones totales & \num{-0.019} & \num{0.63} \\
-OLS, presión a \SI{10}{\kilo\metre} & \num{-0.043} & \num{0.36} \\
-OLS sin Madrid (Cook $=\num{0.97}$) & \num{0.004} & \num{0.90} \\
-Error espacial (SEM) & \num{0.017} & \num{0.68} \\
-\bottomrule
-\end{tabular}
-
-\vspace{4mm}
-\begin{columns}
-\begin{column}{0.46\textwidth}
-\begin{block}{Densidad de población}
-\centering
-$\hat\beta = \num{0.575}$, \quad $p = \num{2.1e-9}$
-\end{block}
-\end{column}
-\begin{column}{0.46\textwidth}
-\begin{block}{Colinealidad descartada}
-\centering
-Todos los VIF $< \num{1.8}$
-\end{block}
-\end{column}
-\end{columns}
-
-\vspace{3mm}
-\centering{\scriptsize Se reporta SEM y no el modelo Durbin pese a su AIC
-marginalmente inferior ($\Delta$AIC $= \num{0.25}$): los contrastes robustos
-separan hacia el error, el $\rho$ del retardo no es significativo
-($p = \num{0.91}$) y ningún impacto del Durbin alcanza significación.}
-
-\end{frame}
-
-% =============================================================================
-\begin{frame}{MAUP: los dos componentes}
-
+\vspace{-6mm}
 \begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\fig[0.34]{../output/figuras/43_maup_zonificacion.png}
-\end{column}
-\begin{column}{0.46\textwidth}
-\vspace{1mm}
-{\footnotesize\textbf{Escala.} A \textsc{nuts}-2 aparece
-$\hat\beta = \num{-0.562}$ ($p = \num{0.006}$). Es íntegramente Madrid:
-Cook $=\num{4.64}$, diecinueve veces el umbral. Sin ella,
-$\hat\beta = \num{-0.063}$ ($p = \num{0.68}$) y $R^2$ ajustado
-\num{0.775} $\rightarrow$ \num{0.597}, casi el \num{0.601} de
-\textsc{nuts}-3.}
-
-\vspace{2mm}
-{\footnotesize\textbf{Zonificación.} \num{1000} particiones alternativas de
-\num{16} grupos por $k$-medias:}
-
-\vspace{2mm}
+\begin{column}{0.31\textwidth}
 \centering
-\footnotesize
-\begin{tabular}{@{}lc@{}}
-\toprule
-Densidad significativa en & \SI{100}{\percent} \\
-\rowcolor{grisc}
-Industria significativa en & \SI{2.5}{\percent} \\
-\bottomrule
-\end{tabular}
-
-\vspace{2mm}
-\raggedright
-{\scriptsize El valor de \textsc{nuts}-2 queda \textbf{fuera del rango
-completo} generado por particiones del mismo tamaño. Madrid \textbf{nunca}
-queda aislada en las mil réplicas: \textsc{nuts}-2 la aísla por razones
-históricas, no geométricas.}
+\textbf{\SI{31158}{\kilo\metre\squared}}\\
+{\footnotesize por comunidad}
+\end{column}
+\begin{column}{0.31\textwidth}
+\centering
+\textbf{\SI{9970}{\kilo\metre\squared}}\\
+{\footnotesize por provincia}
+\end{column}
+\begin{column}{0.34\textwidth}
+\centering
+{\color{rojo}\textbf{\SI{3.6}{\percent} del territorio}}\\
+{\footnotesize \num{169} distritos, $\varnothing$ \SI{10.7}{\kilo\metre}}
 \end{column}
 \end{columns}
+
+\vspace{-2mm}
+\begin{center}
+{\small El mecanismo vive en el \SI{3.6}{\percent} del territorio; las unidades
+sobre las que se promedia son dos órdenes de magnitud mayores.}
+\end{center}
+
+\vspace{-3mm}
+\centering{\scriptsize\color{gris}Los distritos son la unión de discos del
+diámetro estimado en torno a las \num{297} instalaciones: la huella del
+mecanismo, no los \num{520} centros latentes.}
 
 \end{frame}
 
@@ -1003,24 +1379,25 @@ históricas, no geométricas.}
 
 \begin{columns}[T]
 \begin{column}{0.44\textwidth}
-\vspace{3mm}
+\vspace{-2mm}
 \begin{center}
-\begin{tikzpicture}[scale=0.78]
+\begin{tikzpicture}[scale=1]
   \draw[fill=gray!12, draw=gray!50] (0,0) circle (2.5);
   \node[gris] at (0,1.95) {\footnotesize provincia media};
   \node[gris] at (0,1.6) {\footnotesize \SI{9970}{\kilo\metre\squared}};
   \node[gris] at (0,-2.05) {\footnotesize $\varnothing$ equiv.\
         \SI{113}{\kilo\metre}};
   \fill[rojo] (0,0) circle (0.22);
-  \node[rojo,right] at (0.42,0.22) {\footnotesize radio \SI{10}{\kilo\metre}};
+  \node[rojo,right] at (0.42,0.22) {\footnotesize diámetro \SI{10}{\kilo\metre}};
   \node[rojo,right] at (0.42,-0.18) {\footnotesize\textbf{\SI{0.8}{\percent}
         del área}};
+
 \end{tikzpicture}
 \end{center}
 \end{column}
 \begin{column}{0.52\textwidth}
 \vspace{4mm}
-\fig{../output/figuras/50_curva_escala.png}
+\fig[1.1]{50_curva_escala.png}
 \end{column}
 \end{columns}
 
@@ -1034,117 +1411,6 @@ La urbanización \textbf{opera} a escala provincial. La industria no.
 {\small La diferencia no está en la intensidad del mecanismo sino en su
 \textbf{alcance espacial}.}
 \end{center}
-
-\end{frame}
-
-% =============================================================================
-\begin{frame}{Los mecanismos son inseparables a esta escala}
-
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\fig[0.40]{../output/figuras/51_sintesis_bloques.png}
-\end{column}
-\begin{column}{0.46\textwidth}
-\vspace{2mm}
-\centering
-\small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-\textbf{Bloque} & \textbf{único} & \textbf{total} \\
-\midrule
-Uso del suelo & \num{0.157} & \num{0.906} \\
-Urbanización & \num{0.023} & \num{0.664} \\
-Industria & \num{0.005} & \num{0.287} \\
-Geografía & \num{0.001} & \num{0.120} \\
-\bottomrule
-\end{tabular}
-
-\vspace{3mm}
-\begin{alertblock}{}
-\centering
-Varianza única total:
-\textbf{\SI{19.7}{\percent}} del $R^2$
-\end{alertblock}
-
-\vspace{1mm}
-{\footnotesize El \SI{80.3}{\percent} restante es \textbf{compartida}: no
-atribuible a ningún mecanismo por separado.}
-\end{column}
-\end{columns}
-
-\vspace{1mm}
-\centering{\footnotesize La industria se ubica donde hay ciudades, puertos y
-autopistas: las mismas variables que generan \ce{NO2} de tráfico.
-\textbf{La endogeneidad es una propiedad del territorio, no un defecto del
-análisis.}}
-
-\end{frame}
-
-% =============================================================================
-\begin{frame}{Exposición: la media territorial no es la métrica}
-
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\centering
-{\footnotesize Exposición ponderada por población}\\[1mm]
-\fig[0.38]{../output/figuras/13_exposicion_poblacional.png}
-\end{column}
-\begin{column}{0.48\textwidth}
-\centering
-{\footnotesize Brecha frente a la media areal}\\[1mm]
-\fig[0.38]{../output/figuras/15_brecha_exposicion.png}
-\end{column}
-\end{columns}
-
-\vspace{4mm}
-\centering
-\small
-\begin{tabular}{@{}lccc@{}}
-\toprule
- & \textbf{areal} & \textbf{ponderada} &
- \textbf{\% pobl.\ $>$ \SI{20}{\ugm}} \\
-\midrule
-Madrid & \num{7.52} & \num{15.01} & \SI{37.3}{\percent} \\
-Barcelona & \num{6.64} & \num{14.21} & \SI{30.6}{\percent} \\
-Bizkaia & \num{5.74} & \num{11.80} & \SI{22.7}{\percent} \\
-\bottomrule
-\end{tabular}
-
-\end{frame}
-
-% =============================================================================
-\begin{frame}{Cuánto, no solo si}
-
-\vspace{2mm}
-\centering
-\small
-\begin{tabular}{@{}lc@{}}
-\toprule
- & \textbf{\ugm} \\
-\midrule
-\rowcolor{grisc}
-\textbf{Cota superior del efecto industrial areal} & \textbf{\num{0.96}} \\
-Recargo local en estaciones industriales & $\approx\num{1.0}$ \\
-Recargo local en estaciones de tráfico & $\approx\num{3.5}$ \\
-Media areal nacional de fondo & \num{4.28} \\
-\bottomrule
-\end{tabular}
-
-\vspace{4mm}
-\begin{block}{Por qué una cota y no un $p$-valor}
-\centering
-No es que \emph{ignoremos} si la industria influye.
-
-\vspace{1mm}
-Sabemos que \textbf{no puede influir más que eso}: el \SI{22.3}{\percent} de
-la media nacional.
-\end{block}
-
-\vspace{3mm}
-\centering{\footnotesize El \SI{43.3}{\percent} de las estaciones de tráfico superan
-hoy los \SI{20}{\ugm}, frente al \SI{0.16}{\percent} de la superficie de
-fondo. España cumple con holgura la directiva vigente, pero el problema reside
-en una escala por debajo de la que este trabajo puede resolver.}
 
 \end{frame}
 
@@ -1193,8 +1459,8 @@ indistinguible de una ausencia real de efecto.}
 \begin{column}{0.47\textwidth}
 \textbf{Limitaciones}
 \begin{itemize}\footnotesize
-  \item \textbf{Umbral E-PRTR de \SI{100}{\tonne} anuales}: el patrón
-  representa grandes emisores, no toda fuente industrial.
+  \item \textbf{Umbral E-PRTR de \SI{100}{\tonne}}: solo grandes emisores;
+  sesga $\lambda$, no $K$.
   \item \textbf{Canarias fuera del dominio}, con el \SI{24}{\percent} del
   \ce{NOx} industrial español.
   \item \textbf{Se modela fondo, no exposición máxima}: los picos de tráfico
@@ -1209,9 +1475,9 @@ indistinguible de una ausencia real de efecto.}
 \begin{column}{0.47\textwidth}
 \textbf{Trabajo futuro}
 \begin{itemize}\footnotesize
-  \item Formulación bayesiana con \textbf{SPDE} para propagar la incertidumbre
-  de la superficie predicha hacia el modelo areal, en lugar de tratarla como
-  dato.
+  \item Formulación bayesiana con \textbf{\textsc{spde}} para propagar la
+  incertidumbre de la superficie predicha hacia el modelo areal, en lugar de
+  tratarla como dato.
   \item Extensión temporal \textbf{2019--2023} explotando cierres de
   instalaciones como cuasiexperimento.
   \item Repetir el variograma con modelo esférico como análisis de
@@ -1234,11 +1500,14 @@ los ficheros derivados. Estado actual: \textbf{0 fallos}.
 \vfill
 \hspace*{8mm}\begin{minipage}{0.85\textwidth}
   {\color{azulc}\rule{\textwidth}{1.2pt}}\\[6mm]
-  {\Large\color{azul}\bfseries Gracias}\\[6mm]
-  {\small Código, datos y verificación de integridad:}\\[1mm]
-  {\small\texttt{github.com/randyfernandezp/no2-espana}}\\[7mm]
+  {\Large\color{azul}\bfseries Gracias}\\[7mm]
+  {\small Todo el trabajo es reproducible y está publicado:}\\[2mm]
+  {\normalsize\color{azul}\texttt{github.com/randyfernandezp/no2-espana}}\\[2mm]
+  {\footnotesize\color{gris}Código de descarga, análisis y figuras, más
+  \texttt{R/99\_verificar.R}, que comprueba la integridad de la cadena.}\\[7mm]
   {\color{azulc}\rule{\textwidth}{0.5pt}}\\[2mm]
-  {\footnotesize\color{gris}Randy Fernández \hfill 2026}
+  {\footnotesize\color{gris}Randy Fernández Palomino \textperiodcentered\
+  José Carhuaricra Cusipuma \hfill 2026}
 \end{minipage}
 \vfill
 \end{frame}
@@ -1248,10 +1517,136 @@ los ficheros derivados. Estado actual: \textbf{0 fallos}.
 % #############################################################################
 \appendix
 
+\begin{frame}{Reserva: siglas}
+\vspace{-10mm}\begin{columns}[T]
+\begin{column}{0.49\textwidth}
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Método}} \\
+\midrule
+\textsc{ace} & aleatoriedad espacial completa \\
+ & (\emph{complete spatial randomness}) \\
+\textsc{maup} & problema de la unidad de área modificable \\
+ & (\emph{modifiable areal unit problem}) \\
+\textsc{lisa} & indicadores locales de asociación espacial \\
+\textsc{mco} & mínimos cuadrados ordinarios \\
+\textsc{sar} & autorregresivo simultáneo \\
+\textsc{car} & autorregresivo condicional \\
+\textsc{sem} & modelo de error espacial \\
+\textsc{gmrf} & campo markoviano aleatorio gaussiano \\
+\textsc{spde} & ecuación diferencial estocástica en \\
+ & derivadas parciales \\
+\textsc{ko}, \textsc{kde} & kriging ordinario y con deriva externa \\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.49\textwidth}
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Diagnóstico y datos}} \\
+\midrule
+\textsc{rmse} & raíz del error cuadrático medio \\
+\textsc{aic} & criterio de información de Akaike \\
+\textsc{vif} & factor de inflación de la varianza \\
+\textsc{lmg} & descomposición de Lindeman, Merenda \\
+ & y Gold del $R^2$ \\
+\midrule
+\textsc{nuts} & nomenclatura de unidades territoriales \\
+ & estadísticas (Eurostat) \\
+\textsc{eea} & Agencia Europea de Medio Ambiente \\
+\textsc{ied} & Directiva de Emisiones Industriales \\
+\textsc{e-prtr} & registro europeo de emisiones \\
+ & y transferencias de contaminantes \\
+\textsc{corine} & inventario europeo de cobertura del suelo \\
+\textsc{lur} & regresión de uso del suelo \\
+\bottomrule
+\end{tabular}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Reserva: notación}
+\vspace{-5mm}
+\begin{columns}[T]
+\begin{column}{0.49\textwidth}
+\centering
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Ramas continua y areal}} \\
+\midrule
+$\dom$ & área de análisis \\
+$\loci{i}$ & localización $i$-ésima (no aleatoria) \\
+$\dvec$, \; $\dsc$ & desplazamiento y distancia \\
+$\Wp{\loc}$, \; $\Yp{\loc}$ & proceso latente y observable \\
+$\varesp$, \; $\pepita$ & varianza espacial y pepita \\
+$\escala$, \; $\suave$ & escala y suavizado de la correlación \\
+$\rangop$ & rango práctico: $\corr(\rangop)=\num{0.05}$ \\
+\midrule
+$\{R_1,\dots,R_{50}\}$ & índice discreto (provincias) \\
+$\Adj$, \; $\Prec$ & adyacencia y precisión \\
+$\alpha$ & parámetro autorregresivo, $|\alpha|<1$ \\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.49\textwidth}
+\centering
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{Rama de procesos puntuales}} \\
+\midrule
+$N(A)$ & nº de eventos en $A$ \\
+$\lambda(\loc)$ & intensidad de primer orden \\
+$\lambda_2(\loc,\loc')$ & intensidad de segundo orden \\
+$g_2$, \; $K(t)$ & correlación por pares y función $K$ \\
+$\Lambda(\loc)$ & intensidad aleatoria (Cox) \\
+$\kappa$, \; $\sigma$ & padres y dispersión \\
+$h$, \; $p$ & ancho de banda y prob.\ de retención \\
+$Z_j(\loc)$ & covariable del modelo de intensidad \\
+\bottomrule
+\end{tabular}
+\end{column}
+\end{columns}
+
+\vspace{5mm}
+{\footnotesize\color{gris} Las localizaciones son $\loc$, nunca $x/y$; el
+desplazamiento, $\dvec$. La adyacencia es $\Adj$: la letra $W$ está reservada
+al proceso. $\rho$ designa \emph{solo} la correlación espacial: el
+autorregresivo es $\alpha$ y la intensidad de padres, $\kappa$.}
+\end{frame}
+
+\begin{frame}{Reserva: cómo se define la vecindad}
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+\fig[0.8]{44_grafo_vecindad.png}
+\end{column}
+\begin{column}{0.42\textwidth}
+\vspace{4mm}
+{\small El grafo no dirigido de contigüidad tiene \textbf{cuatro componentes
+conexas}: península, Mallorca, Menorca y Eivissa--Formentera.}
+
+\vspace{3mm}
+{\small Las islas quedan sin vecinos con quien compartir información y los
+contrastes de dependencia no están definidos sobre un grafo disconexo.}
+
+\vspace{4mm}
+\begin{block}{}
+\small
+Con $k=5$ vecinos más próximos el grafo se reconecta. Es la razón de usar
+$k$-vecinos y no contigüidad en todo el diagnóstico areal.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Reserva: ¿hay anisotropía?}
+\vspace{-10mm}
 \begin{columns}[T]
 \begin{column}{0.52\textwidth}
-\fig{../output/figuras/03_variograma_direccional.png}
+\fig[1.2]{03_variograma_direccional.png}
 \end{column}
 \begin{column}{0.44\textwidth}
 \vspace{6mm}
@@ -1267,9 +1662,10 @@ directa de mejora.}
 \end{frame}
 
 \begin{frame}{Reserva: ¿las instalaciones próximas emiten cantidades parecidas?}
+\vspace{-10mm}
 \begin{columns}[T]
 \begin{column}{0.52\textwidth}
-\fig{../output/figuras/27_markcorr.png}
+\fig[1.5]{27_markcorr.png}
 \end{column}
 \begin{column}{0.44\textwidth}
 \vspace{6mm}
@@ -1292,24 +1688,25 @@ ecuación de presión.}
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize $P(\ce{NO2} > \SI{20}{\ugm})$ --- directiva 2030}\\[1mm]
-\fig{../output/figuras/10_prob_20.png}
+\fig[1.2]{10_prob_20.png}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
 {\footnotesize $P(\ce{NO2} > \SI{10}{\ugm})$ --- recomendación OMS}\\[1mm]
-\fig{../output/figuras/12_prob_10.png}
+\fig[1.2]{12_prob_10.png}
 \end{column}
 \end{columns}
-\vspace{4mm}
+\vspace{-1mm}
 \centering{\small Superficie nacional con $P > 0{,}5$: \SI{0.16}{\percent}
 para el umbral de \SI{20}{\ugm}. Población con $P > 0{,}5$ de superar
 \SI{10}{\ugm}: \SI{9.26}{\percent}.}
 \end{frame}
 
 \begin{frame}{Reserva: residuos del modelo de intensidad}
+\vspace{-5mm}
 \begin{columns}[T]
 \begin{column}{0.52\textwidth}
-\fig{../output/figuras/25_residuos_ppm.png}
+\fig[1.5]{25_residuos_ppm.png}
 \end{column}
 \begin{column}{0.44\textwidth}
 \vspace{6mm}

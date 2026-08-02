@@ -211,7 +211,7 @@ metodológicamente independientes y comprobar si convergen. La primera vía
 observa solo dónde están las instalaciones y no mira ninguna concentración; la
 segunda observa concentraciones y pregunta a qué distancia deja de notarse la
 emisión. No existe razón aritmética para que coincidan.
-
+\newpage
 % =============================================================================
 \section{Datos}
 
@@ -274,7 +274,7 @@ proceso.
 clase 523, no \emph{nodata}. Sin corregirlo, provincias costeras como Cádiz
 aparecen con fracción artificial \num{0.15} cuando el valor correcto sobre
 tierra es \num{0.72}.
-
+\newpage
 % =============================================================================
 \section{Metodología}
 
@@ -582,7 +582,7 @@ deriva externa}
 \includegraphics[width=0.48\textwidth]{06_mapa_ko.png}\hfill
 \includegraphics[width=0.48\textwidth]{07_mapa_kde.png}
 \end{center}
-
+\newpage
 \rotulo{Tabla 4}{Validación cruzada \emph{leave-one-out} sobre \num{212}
 estaciones de fondo}
 
@@ -605,12 +605,26 @@ prácticamente elimina el sesgo. El mapa de la derecha muestra estructura fina
 que el de la izquierda no puede reproducir, porque el kriging ordinario solo
 dispone de la información de las propias estaciones.
 
+La calibración de la incertidumbre se evalúa en la escala del modelo, que es
+donde vive la varianza de kriging. El objetivo validado es
+$\Yp{\loc^{*}}\mid\bm{Y}$ —una observación nueva, con $\pepita\bm{I}$
+incluido— y no el campo latente $\Wp{\loc^{*}}\mid\bm{Y}$, que es lo que
+corresponde al comparar contra mediciones de estaciones.
+
 La cobertura empírica del intervalo nominal al \SI{95}{\percent} es
-\num{0.910}. Conviene precisar contra qué se valida: al comparar contra
-observaciones de estaciones, el objetivo correcto es $\Yp{\loc^{*}}\mid\bm{Y}$
-—que incluye $\pepita\bm{I}$— y no el campo latente
-$\Wp{\loc^{*}}\mid\bm{Y}$. La ligera infracobertura debe leerse a la luz de esa
-distinción.
+\num{0.910}, y la desviación típica de los residuos estandarizados
+\textbf{$\mathrm{ESD} = \num{1.225}$} frente al valor esperado de \num{1}. Las
+dos cifras son coherentes entre sí: con residuos de desviación \num{1.225} y un
+intervalo construido con el cuantil \num{1.96}, la cobertura teórica es
+$\Pr(|Z| < \num{1.96}/\num{1.225}) = \num{0.890}$.
+
+El diagnóstico es, por tanto, que \textbf{la varianza de kriging subestima la
+real en un factor $\num{1.225}^2 = \num{1.50}$}. La causa no es la
+especificación del objetivo de predicción sino que $\varesp$, $\pepita$ y
+$\escala$ se tratan como \emph{conocidos} cuando en realidad se estimaron de
+los mismos datos: la varianza de kriging no propaga la incertidumbre de esos
+estimadores. Es el argumento estándar a favor de la formulación bayesiana que
+se discute en el trabajo futuro.
 
 \rotulo{Figura 5}{Error de predicción}
 
@@ -653,7 +667,7 @@ sin vecinos con quien compartir información, y los contrastes de dependencia no
 están definidos sobre un grafo disconexo. Con $k=5$ vecinos más próximos el
 grafo se reconecta en una sola componente. Esta es la razón de usar
 $k$-vecinos y no contigüidad en todo el diagnóstico areal.
-
+\newpage
 \rotulo{Figura 7}{Diagrama de dispersión de Moran y agrupamientos locales}
 
 \begin{center}
@@ -872,7 +886,7 @@ suelo, dónde vive la gente no predice dónde se instala la industria, lo que
 constituye evidencia directa contra la hipótesis de colinealidad total entre
 ambos mecanismos. El segundo es que \num{0.999} es esencialmente el valor de
 referencia bajo independencia, $g_2=1$.
-
+\newpage
 \rotulo{Figura 11}{Funciones de segundo orden: $K$ y $g$ inhomogéneas}
 
 \begin{center}
@@ -1002,7 +1016,7 @@ las cifras eran \SI{9.5}{} y \SI{10.0}{\kilo\metre} (razón \num{1.05});
 después, \SI{10.7}{} y \SI{10.0}{\kilo\metre} (razón \num{0.93}). Que la
 coincidencia sobreviva a un cambio no planeado en los datos de entrada es
 evidencia de que no es un artefacto de un ajuste concreto.
-
+\newpage
 \subsection*{Por qué el efecto desaparece al agregar}
 
 \rotulo{Figura 15}{Las tres escalas espaciales sobre el mismo territorio}
@@ -1119,8 +1133,11 @@ independientes: es el único resultado que ninguna produce sola.
   \item El modelo de correlación seleccionado corresponde al límite suave de la
   familia de Matérn e implica variación por debajo de la menor distancia entre
   estaciones.
-  \item La cobertura empírica al \SI{95}{\percent} es \num{0.910}, por debajo
-  de la nominal.
+  \item Los intervalos de predicción están mal calibrados por construcción:
+  cobertura \num{0.910} y $\mathrm{ESD}=\num{1.225}$, es decir una varianza un
+  \SI{50}{\percent} menor de la real. Los intervalos de este trabajo deben
+  leerse como \emph{condicionales} a $\hat\varesp$, $\hat\pepita$ y
+  $\hat\escala$.
 \end{enumerate}
 
 \subsection*{Trabajo futuro}
