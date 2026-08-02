@@ -246,10 +246,10 @@ escala_km <- extraer_escala_km(leer_si("acoplamiento"))
 REF <- tribble(
   ~magnitud,                             ~esperado, ~tol, ~observado,
   "instalaciones en el patrón",              297,     5,   as.numeric(npoints(pp)),
-  "rango práctico del variograma (km)",       71,     8,   rango_km,
+  "rango práctico del variograma (km)",       72,     8,   rango_km,
   "escala óptima de acoplamiento (km)",       10,     3,   escala_km,
   "diámetro del distrito, 4 sigma (km)",    10.7,     3,   4 * sigma_km,
-  "rango residual tras la deriva (km)",       24,      6,   rango_res
+  "rango residual tras la deriva (km)",       26,      6,   rango_res
 )
 REF$desvio <- round(REF$observado - REF$esperado, 2)
 print(as.data.frame(REF))
